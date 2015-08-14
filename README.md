@@ -4,6 +4,12 @@ This is a small shell script to help with bringing video.js 4.x code up to speed
 
 ## How do?
 
+While this is a Bash script, it runs a Node-based binary, so you'll need to install NPM dependencies:
+
+```bash
+npm install
+```
+
 Run the script in a shell, pass it directories or files:
 
 ```bash

@@ -5,7 +5,7 @@ process_js(){
     if [ $DRY = true ]; then
         echo "$1"
     else
-        echo "TODO: process js file $1"
+        ./node_modules/.bin/grasp -e 'videojs.util' -R 'videojs' -i "$1"
     fi
 }
 
@@ -39,6 +39,11 @@ while getopts "d" FLAG; do
         d) DRY="true" ;;
     esac
 done
+
+if [ ! -L "node_modules/.bin/grasp" ]; then
+    echo "Please install Node dependencies (npm install)!"
+    exit 1
+fi
 
 # Loop over arguments and find all JS and CSS files not in node_modules
 # and process each of them individually.

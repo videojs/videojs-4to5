@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "grasp": "~0.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bithub.brightcove.com:videocloud/videojs-4to5.git"
+  }
+}
