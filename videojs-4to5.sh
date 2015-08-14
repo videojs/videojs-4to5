@@ -1,25 +1,40 @@
 #!/bin/sh
 
-# Takes a file, an squery selector, and a replacement string and performs
-# grasp-based replacement on that string.
-replace_js(){
-    ./node_modules/.bin/grasp -s "$2" -R "$3" -i "$1"
-}
-
 # Takes a single JavaScript filename and processes it.
 process_js(){
     if [ $DRY == true ]; then
         echo "$1"
     else
-        replace_js \
-            $1 \
-            '#vjs' \
-            'videojs'
 
-        replace_js \
-            $1 \
-            'member[obj=#videojs][prop=#util]' \
-            'videojs'
+        # Replace uses of the global identifier "vjs" with "videojs"
+        ./node_modules/.bin/grasp \
+            -s "#vjs" \
+            -R "videojs" \
+            -i "$1"
+
+        # Replace uses of the "videojs.util" object.
+        ./node_modules/.bin/grasp \
+            -s "member[obj=#videojs][prop=#util]" \
+            -R "videojs" \
+            -i "$1"
+
+        # Replace uses of the "videojs.JSON" object.
+        ./node_modules/.bin/grasp \
+            -e "videojs.JSON" \
+            -R "JSON" \
+            -i "$1"
+
+        # Replace uses of the "videojs.TOUCH_ENABLED" object.
+        ./node_modules/.bin/grasp \
+            -e "videojs.TOUCH_ENABLED" \
+            -R "videojs.browser.TOUCH_ENABLED" \
+            -i "$1"
+
+        # Replace calls to "videojs.*.extend()" with calls to "videojs.extends()".
+        ./node_modules/.bin/grasp \
+            -e "videojs.\$className.extend(\$proto)" \
+            -R "videojs.extends(videojs.getComponent('{{className}}'), {{proto}})" \
+            -i "$1"
     fi
 }
 
