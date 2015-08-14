@@ -1,6 +1,17 @@
 {
+  "name": "videojs-4to5",
+  "description": "This is a script to help with bringing video.js 4.x code up to speed with changes in video.js 5.0.",
+  "version": "0.0.1",
+  "author": "Brightcove",
+  "license": "MIT",
+  "bin": {
+    "videojs-4to5": "bin/videojs-4to5"
+  },
   "dependencies": {
-    "grasp": "~0.3.0"
+    "argv": "0.0.x",
+    "find": "0.2.x",
+    "grasp": "0.3.x",
+    "lodash": "^3.10.1"
   },
   "repository": {
     "type": "git",

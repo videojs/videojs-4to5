@@ -1,0 +1,116 @@
+#!/usr/bin/env node
+
+var _ = require('lodash');
+var argv = require('argv');
+var find = require('find');
+var fs = require('fs');
+var grasp = require('grasp');
+var path = require('path');
+var util = require('util');
+
+var args = argv.option([{
+  name: 'list',
+  short: 'l',
+  type: 'boolean',
+  description: 'Outputs a list of files that would be changed.'
+}, {
+  name: 'dry-run',
+  short: 'd',
+  type: 'boolean',
+  description: [
+    'Outputs changes to new files (without overwriting).',
+    'For example, the file "foo.js" will have its changes saved to "videojs-4to5.foo.js".',
+    'Files with this prefix will be ignored on subsequent runs.',
+    'This option supercedes --file-list.'
+  ].join('')
+}, {
+  name: 'double-quotes',
+  short: 'q',
+  type: 'boolean',
+  description: 'Single quotes are used by default in generated code. This option will cause double quotes to be used instead.'
+}, {
+  name: 'ignore-dir',
+  short: 'i',
+  type: 'list',
+  description: 'Use multiple times to ignore directory names (e.g., --ignore-dir=dist --ignore-dir=build). node_modules is ignored always.'
+}]).run();
+
+var dryRunPrefix = 'videojs-4to5.';
+
+var quote = args.options['double-quotes'] ? '"' : '\'';
+
+var ignored = new RegExp(util.format(
+  '[\/\\\\]?(%s)[\/\\\\]',
+  ['node_modules'].concat(args.options['ignore-dir']).filter(function (s) {
+    return !!s;
+  }).join('|')
+));
+
+/**
+ * Function for performing multiple grasp-based replacements.
+ *
+ * @param  {String} s
+ * @return {String}
+ */
+var replacer = _.flow.apply(_, [
+  ['s', '#vjs', 'videojs'],
+  ['s', 'member[obj=#videojs][prop=#util]', 'videojs'],
+  ['e', 'videojs.JSON', 'JSON'],
+  ['e', 'videojs.TOUCH_ENABLED', 'videojs.browser.TOUCH_ENABLED'],
+  [
+    'e',
+    'videojs.\$className.extend(\$proto)',
+    util.format('videojs.extends(videojs.getComponent(%s{{className}}%s), {{proto}})', quote, quote)
+  ],
+].map(function (r) {
+  r[0] += 'query';
+  return grasp.replace.apply(grasp, r);
+}));
+
+/**
+ * Validates that a filepath is able to be processed.
+ *
+ * @param  {String} filepath
+ * @return {Boolean}
+ */
+function validate(filepath) {
+  return !ignored.test(filepath) &&
+    path.extname(filepath) === '.js' &&
+    !_.startsWith(path.basename(filepath), dryRunPrefix);
+}
+
+/**
+ * Processing function for JavaScript files.
+ *
+ * @param  {String} filepath
+ */
+function processor(filepath) {
+  var target = args.options['dry-run'] ?
+    path.join(path.dirname(filepath), dryRunPrefix + path.basename(filepath)) :
+    filepath;
+
+  if (args.options.list) {
+    console.log(filepath);
+  } else {
+    fs.readFile(filepath, function (err, data) {
+      fs.writeFile(target, replacer(data.toString()));
+    });
+  }
+}
+
+// Dry run supercedes file list.
+if (args.options['dry-run']) {
+  args.options['file-list'] = false;
+}
+
+args.targets.forEach(function (target) {
+  fs.stat(target, function (err, stats) {
+    if (stats.isFile() && validate(target)) {
+      processor(target);
+    } else {
+      find.file(/\.js$/, target, function (files) {
+        files.filter(validate).forEach(processor);
+      });
+    }
+  });
+});
