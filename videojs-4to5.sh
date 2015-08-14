@@ -1,11 +1,18 @@
 #!/bin/sh
 
+# Takes a file, an squery selector, and a replacement string and performs
+# grasp-based replacement on that string.
+replace_js(){
+    ./node_modules/.bin/grasp -s "$2" -R "$3" -i "$1"
+}
+
 # Takes a single JavaScript filename and processes it.
 process_js(){
     if [ $DRY = true ]; then
         echo "$1"
     else
-        ./node_modules/.bin/grasp -e 'videojs.util' -R 'videojs' -i "$1"
+        replace_js $1 '#vjs' 'videojs'
+        replace_js $1 'member[obj=#videojs][prop=#util]' 'videojs'
     fi
 }
 
