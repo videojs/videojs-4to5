@@ -8,17 +8,24 @@ replace_js(){
 
 # Takes a single JavaScript filename and processes it.
 process_js(){
-    if [ $DRY = true ]; then
+    if [ $DRY == true ]; then
         echo "$1"
     else
-        replace_js $1 '#vjs' 'videojs'
-        replace_js $1 'member[obj=#videojs][prop=#util]' 'videojs'
+        replace_js \
+            $1 \
+            '#vjs' \
+            'videojs'
+
+        replace_js \
+            $1 \
+            'member[obj=#videojs][prop=#util]' \
+            'videojs'
     fi
 }
 
 # Takes a single CSS filename and processes it.
 process_css(){
-    if [ $DRY = true ]; then
+    if [ $DRY == true ]; then
         echo "$1"
     else
         if [ -f "$1-tmp" ]; then
@@ -37,9 +44,9 @@ process_file(){
     if [ -f "$1" ]; then
         FNAME=$(basename "$1")
         EXT="${FNAME##*.}"
-        if [ "$EXT" == "js" ]; then
+        if [ "$EXT" == "js" ] && [ $JS == true ]; then
             process_js "$1"
-        elif [ "$EXT" == "css" ]; then
+        elif [ "$EXT" == "css" ] && [ $CSS == true ]; then
             process_css "$1"
         fi
     fi
@@ -47,10 +54,14 @@ process_file(){
 
 # Parse options.
 DRY="false"
+CSS="true"
+JS="true"
 
-while getopts "d" FLAG; do
+while getopts "cdj" FLAG; do
     case "${FLAG}" in
+        c) JS="false" ;;
         d) DRY="true" ;;
+        j) CSS="false" ;;
     esac
 done
 
