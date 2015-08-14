@@ -14,7 +14,14 @@ process_css(){
     if [ $DRY = true ]; then
         echo "$1"
     else
-        echo "TODO: process css file $1"
+        if [ -f "$1-tmp" ]; then
+            rm "$1-tmp"
+        fi
+        cat "$1" |
+            sed "s/\.vjs-live-controls/\.vjs-live-control/g" |
+            cat > "$1-tmp" &&
+            rm "$1" &&
+            mv "$1-tmp" "$1"
     fi
 }
 
