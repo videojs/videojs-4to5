@@ -18,21 +18,27 @@ var args = argv.option([{
   short: 'd',
   type: 'boolean',
   description: [
-    'Outputs changes to new files (without overwriting).',
-    'For example, the file "foo.js" will have its changes saved to "videojs-4to5.foo.js".',
-    'Files with this prefix will be ignored on subsequent runs.',
-    'This option supercedes --file-list.'
+    'Outputs changes to new files (without overwriting). For example, the ',
+    'file "foo.js" will have its changes saved to "videojs-4to5.foo.js".',
+    'Files with this prefix will be ignored on subsequent runs. This option ',
+    'supercedes --file-list.'
   ].join('')
 }, {
   name: 'double-quotes',
   short: 'q',
   type: 'boolean',
-  description: 'Single quotes are used by default in generated code. This option will cause double quotes to be used instead.'
+  description: [
+    'Single quotes are used by default in generated code. This option will ',
+    'cause double quotes to be used instead.'
+  ].join('')
 }, {
   name: 'ignore-dir',
   short: 'i',
   type: 'list',
-  description: 'Use multiple times to ignore directory names (e.g., --ignore-dir=dist --ignore-dir=build). node_modules is ignored always.'
+  description: [
+    'Use multiple times to ignore directory names (e.g., --ignore-dir=dist ',
+    '--ignore-dir=build). node_modules is always ignored.'
+  ].join('')
 }]).run();
 
 var dryRunPrefix = 'videojs-4to5.';
@@ -41,9 +47,7 @@ var quote = args.options['double-quotes'] ? '"' : '\'';
 
 var ignored = new RegExp(util.format(
   '[\/\\\\]?(%s)[\/\\\\]',
-  ['node_modules'].concat(args.options['ignore-dir']).filter(function (s) {
-    return !!s;
-  }).join('|')
+  _.filter(_.union(['node_modules'], args.options['ignore-dir'])).join('|')
 ));
 
 /**
@@ -53,14 +57,25 @@ var ignored = new RegExp(util.format(
  * @return {String}
  */
 var replacer = _.flow.apply(_, [
+
+  // Each array should be composed of elements matching:
+  //   [0]: "s" or "e" representing "selector query" or "example query"
+  //   [1]: search string
+  //   [2]: replace string
   ['s', '#vjs', 'videojs'],
   ['s', 'member[obj=#videojs][prop=#util]', 'videojs'],
   ['e', 'videojs.JSON', 'JSON'],
   ['e', 'videojs.TOUCH_ENABLED', 'videojs.browser.TOUCH_ENABLED'],
+  ['e', 'videojs.round($x, $y)', 'Number({{x}}.toFixed({{y}}))'],
+  ['e', 'videojs.trim($x)', '{{x}}.trim()'],
   [
     'e',
-    'videojs.\$className.extend(\$proto)',
-    util.format('videojs.extends(videojs.getComponent(%s{{className}}%s), {{proto}})', quote, quote)
+    'videojs.$className.extend($proto)',
+    util.format(
+      'videojs.extends(videojs.getComponent(%s{{className}}%s), {{proto}})',
+      quote,
+      quote
+    )
   ],
 ].map(function (r) {
   r[0] += 'query';
