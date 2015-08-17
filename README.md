@@ -16,7 +16,7 @@ Run the script in a shell, pass it directories and/or files:
 videojs-4to5 my-project some-file.js
 ```
 
-All JavaScript and CSS files will be edited in place to reflect changes for video.js 5.0.
+All JavaScript files will be edited in place (unless you do a `--dry-run`) to make changes for video.js 5.0 compatibility.
 
 ### Options
 
