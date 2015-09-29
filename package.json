@@ -11,10 +11,16 @@
     "argv": "0.0.x",
     "find": "0.2.x",
     "grasp": "0.3.x",
-    "lodash": "^3.10.1"
+    "lodash": "3.x.x"
+  },
+  "devDependencies": {
+    "mocha": "2.x.x"
   },
   "repository": {
     "type": "git",
     "url": "git@bithub.brightcove.com:videocloud/videojs-4to5.git"
+  },
+  "scripts": {
+    "test": "mocha -s 1000"
   }
 }

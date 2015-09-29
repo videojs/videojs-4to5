@@ -19,36 +19,70 @@ var quotify = function (quote, str) {
 /**
  * Creates functions for performing multiple grasp-based replacements.
  *
- * @param  {String} quote A quote character to use for generated code.
+ * @param  {String} [quote="'"] A quote character to use for generated code.
  * @return {Function}
  */
 module.exports = function (quote) {
-  var q = _.partial(quotify, quote);
-  return _.flow.apply(_, [
+  var q = _.partial(quotify, quote || '\'');
 
-    // Each array should be composed of elements matching:
-    //   [0]: "s" or "e" representing "selector query" or "example query"
-    //   [1]: search string
-    //   [2]: replace string
-    ['s', '#vjs', 'videojs'],
-    ['s', 'member[obj=#videojs][prop=#util]', 'videojs'],
-    ['e', 'videojs.JSON', 'JSON'],
-    ['e', 'videojs.TOUCH_ENABLED', 'videojs.browser.TOUCH_ENABLED'],
-    ['e', 'videojs.round($x, $y)', 'Number({{x}}.toFixed({{y}}))'],
-    ['e', 'videojs.trim($x)', '{{x}}.trim()'],
+  return _.flow.apply(_, _.union(
     [
-      'e',
-      'videojs.$className.extend($proto)',
-      q('videojs.extends(videojs.getComponent(%s{{className}}%s), {{proto}})')
+
+      // Each array should be composed of elements matching:
+      //   [0]: "s" or "e" representing "selector query" or "example query"
+      //   [1]: search string
+      //   [2]: replace string
+      ['s', 'ident[name=vjs]:not(member[prop=vjs])', 'videojs'],
+      ['e', 'videojs.util.mergeOptions', 'videojs.mergeOptions'],
+      ['e', 'videojs.JSON', 'JSON'],
+      ['e', 'videojs.TOUCH_ENABLED', 'videojs.browser.TOUCH_ENABLED'],
+      ['e', 'videojs.round($x, $y)', 'Number({{x}}.toFixed({{y}}))'],
+      ['e', 'videojs.trim($x)', '{{x}}.trim()'],
+      [
+        'e',
+        'videojs.$className.extend($proto)',
+        q('videojs.extend(videojs.getComponent(%s{{className}}%s), {{proto}})')
+      ],
+      ['e', 'videojs.EventEmitter', 'videojs.EventTarget'],
     ],
-  ].concat(
+
+    // Create rules for renamed player methods.
+    //
+    //    myPlayer.options() -> myPlayer.options_
+    //
+    _.map({
+      options: 'options_',
+      cancelFullScreen: 'cancelFullscreen',
+      isFullScreen: 'isFullscreen',
+      requestFullScreen: 'requestFullscreen',
+      getTagSettings: 'constructor.getTagSettings',
+      onDurationChange: 'handleTechDurationChange',
+      onEnded: 'handleTechEnded',
+      onError: 'handleTechError',
+      onFirstPlay: 'handleTechFirstPlay',
+      onFullscreenChange: 'handleTechFullscreenChange',
+      onLoadStart: 'handleTechLoadStart',
+      onLoadedAllData: 'handleLoadedAllData',
+      onLoadedMetaData: 'handleTechLoadedMetaData',
+      onLoadedData: 'handleTechLoadedData',
+      onPause: 'handleTechPause',
+      onPlay: 'handleTechPlay',
+      onProgress: 'handleTechProgress',
+      onSeeked: 'handleTechSeeked',
+      onSeeking: 'handleTechSeeking',
+      onTimeUpdate: 'handleTechTimeUpdate',
+      onVolumeChange: 'handleTechVolumeChange',
+      onWaiting: 'handleTechWaiting',
+    }, function (v, k) {
+      return ['e', '$obj.' + k, '{{obj}}.' + v];
+    }),
 
     // Create rules for each pre-existing component class name to replace
     // them with the `getComponent` version. e.g.:
     //
     //    videojs.MuteToggle -> videojs.getComponent('MuteToggle')
     //
-    [
+    _.map([
       'BigPlayButton',
       'Button',
       'CaptionSettingsMenuItem',
@@ -63,7 +97,6 @@ module.exports = function (quote) {
       'CurrentTimeDisplay',
       'DurationDisplay',
       'ErrorDisplay',
-      'EventEmitter',
       'Flash',
       'FullscreenToggle',
       'Html5',
@@ -89,7 +122,7 @@ module.exports = function (quote) {
       'Slider',
       'SubtitlesButton',
       'SubtitlesTrack',
-      'TextTrack',
+      'Tech',
       'TextTrackButton',
       'TextTrackCueList',
       'TextTrackDisplay',
@@ -102,10 +135,10 @@ module.exports = function (quote) {
       'VolumeHandle',
       'VolumeLevel',
       'VolumeMenuButton'
-    ].map(function (className) {
+    ], function (className) {
       return [
         'e',
-        util.format('videojs.%s', className),
+        'videojs.' + className,
         q('videojs.getComponent(%s' + className + '%s)')
       ];
     })
