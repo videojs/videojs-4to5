@@ -51,7 +51,9 @@ module.exports = function (quote) {
     //    myPlayer.options() -> myPlayer.options_
     //
     _.map({
-      options: 'options_',
+
+      // In the case of options, we want to only replace function calls.
+      'options()': 'options_',
       cancelFullScreen: 'cancelFullscreen',
       isFullScreen: 'isFullscreen',
       requestFullScreen: 'requestFullscreen',

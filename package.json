@@ -21,6 +21,6 @@
     "url": "git@bithub.brightcove.com:videocloud/videojs-4to5.git"
   },
   "scripts": {
-    "test": "mocha -s 1000"
+    "test": "mocha"
   }
 }
