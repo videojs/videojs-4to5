@@ -22,9 +22,13 @@ if (!process.env.TRAVIS) {
 
 module.exports = function(config) {
   config.set({
-    frameworks: ['qunit'],
+    frameworks: ['mocha', 'chai'],
+
+    reporters: ['mocha'],
 
     singleRun: true,
+
+    loggers: [],
 
     browsers: browsers,
 
@@ -32,7 +36,7 @@ module.exports = function(config) {
       '../node_modules/video.js/dist/ie8/videojs-ie8.min.js',
       '../node_modules/video.js/dist/video.js',
       '../index.js',
-      'test.js'
+      'script.js'
     ],
 
     captureTimeout: 300000,
