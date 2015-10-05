@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "author": "Brightcove",
   "license": "MIT",
+  "main": "index.js",
   "bin": {
     "videojs-4to5": "bin/videojs-4to5"
   },
@@ -14,13 +15,21 @@
     "lodash": "3.x.x"
   },
   "devDependencies": {
-    "mocha": "2.x.x"
+    "jshint": "^2.8.0",
+    "karma": "^0.13.9",
+    "karma-browserstack-launcher": "^0.1.5",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-firefox-launcher": "^0.1.6",
+    "karma-qunit": "^0.1.5",
+    "mocha": "2.x.x",
+    "qunitjs": "^1.19.0",
+    "video.js": "^5.0.0-rc.90"
   },
   "repository": {
     "type": "git",
     "url": "git@bithub.brightcove.com:videocloud/videojs-4to5.git"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "jshint index.js && mocha test/replacer.js && karma start test/karma.config.js"
   }
 }

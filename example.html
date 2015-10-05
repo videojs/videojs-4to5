@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>video.js Compatibility Example</title>
+
+  <link href="node_modules/video.js/dist/video-js.css" rel="stylesheet">
+  <script src="node_modules/video.js/dist/ie8/videojs-ie8.min.js"></script>
+  <script src="node_modules/video.js/dist/video.js"></script>
+  <script src="index.js"></script>
+</head>
+<body>
+  <video id="video" class="video-js vjs-default-skin" height="300" width="600" controls>
+    <source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4'>
+    <source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm'>
+    <source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg'>
+  </video>
+  <script>
+    var player = videojs('video');
+  </script>
+</body>
+</html>
