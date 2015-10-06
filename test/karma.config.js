@@ -1,25 +1,3 @@
-var browsers = [];
-
-if (!process.env.TRAVIS) {
-  browsers = ['Chrome', 'Firefox'];
-} else {
-  if (process.env.BROWSER_STACK_USERNAME) {
-    browsers = [
-      'chrome_bs',
-      'firefox_bs',
-      'safari_bs',
-      'ie11_bs',
-      'ie10_bs',
-      'ie9_bs',
-      'ie8_bs',
-      'android_bs',
-      'ios_bs'
-    ];
-  } else {
-    browsers = ['Firefox'];
-  }
-}
-
 module.exports = function(config) {
   config.set({
     frameworks: ['mocha', 'chai'],
@@ -30,13 +8,28 @@ module.exports = function(config) {
 
     loggers: [],
 
-    browsers: browsers,
+    browsers: !process.env.TRAVIS ? [
+      'Chrome',
+      'Firefox'
+    ] : process.env.BROWSER_STACK_USERNAME ? [
+      'chrome_bs',
+      'firefox_bs',
+      'safari_bs',
+      'ie11_bs',
+      'ie10_bs',
+      'ie9_bs',
+      'ie8_bs',
+      'android_bs',
+      'ios_bs'
+    ] : [
+      'Firefox'
+    ],
 
     files: [
       '../node_modules/video.js/dist/ie8/videojs-ie8.min.js',
       '../node_modules/video.js/dist/video.js',
-      '../index.js',
-      'script.js'
+      '../src/plugin.js',
+      'plugin.js'
     ],
 
     captureTimeout: 300000,

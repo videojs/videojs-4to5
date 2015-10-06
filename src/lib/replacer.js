@@ -148,4 +148,4 @@ module.exports = function (quote) {
     r[0] += 'query';
     return grasp.replace.apply(grasp, r);
   }));
-}
+};

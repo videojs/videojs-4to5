@@ -103,4 +103,4 @@ module.exports = function (targets, options) {
       value: targets
     }
   });
-}
+};

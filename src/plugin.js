@@ -13,7 +13,8 @@
 
   videojs.util = {
     mergeOptions: function() {
-      videojs.log.warn('videojs.util.mergeOptions is deprecated. Use videojs.mergeOptions instead.');
+      videojs.log.warn('videojs.util.mergeOptions is deprecated. ' +
+        'Use videojs.mergeOptions instead.');
       return videojs.mergeOptions.apply(null, arguments);
     }
   };
@@ -41,7 +42,8 @@
   }
 
   videojs.round = function(x, y) {
-    videojs.log.warn('videojs.round(x, y) is deprecated. Use Number(x.toFixed(y)) instead.');
+    videojs.log.warn('videojs.round(x, y) is deprecated. ' +
+      'Use Number(x.toFixed(y)) instead.');
     return Number(x.toFixed(y));
   };
 

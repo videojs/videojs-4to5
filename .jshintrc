@@ -1,0 +1,18 @@
+{
+  "browser": true,
+  "camelcase": true,
+  "curly": true,
+  "debug": true,
+  "eqeqeq": true,
+  "immed": true,
+  "latedef": true,
+  "laxbreak": true,
+  "noarg": true,
+  "node": true,
+  "nonew": true,
+  "onevar": true,
+  "trailing": true,
+  "undef": true,
+  "unused": true,
+  "validthis": true
+}

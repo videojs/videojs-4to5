@@ -1,4 +1,3 @@
-
 describe('compatibility script', function() {
   it('Functions are restored', function() {
     var constants = [
@@ -20,8 +19,7 @@ describe('compatibility script', function() {
       i, constant;
 
     for (i = 0; i < constants.length; i++) {
-      constant = constants[i];
-      expect(videojs.hasOwnProperty(constants[i]), 'videojs.' + constant + ' exists');
+      expect(videojs).ownProperty(constants[i]);
     }
 
     expect(vjs).to.exist;

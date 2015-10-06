@@ -4,7 +4,6 @@
   "version": "0.0.1",
   "author": "Brightcove",
   "license": "MIT",
-  "main": "index.js",
   "bin": {
     "videojs-4to5": "bin/videojs-4to5"
   },
@@ -33,6 +32,6 @@
     "url": "git@bithub.brightcove.com:videocloud/videojs-4to5.git"
   },
   "scripts": {
-    "test": "jshint index.js && mocha test/replacer.js && karma start test/karma.config.js"
+    "test": "jshint src/ bin/ && mocha test/replacer.js && karma start test/karma.config.js"
   }
 }
