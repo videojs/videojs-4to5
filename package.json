@@ -3,7 +3,8 @@
   "description": "This is a script to help with bringing video.js 4.x code up to speed with changes in video.js 5.0.",
   "version": "0.0.1",
   "author": "Brightcove",
-  "license": "MIT",
+  "copyright": "Copyright Brightcove, Inc. <https://www.brightcove.com/>",
+  "license": "Apache-2.0",
   "bin": {
     "videojs-4to5": "bin/videojs-4to5"
   },
@@ -29,7 +30,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@bithub.brightcove.com:videocloud/videojs-4to5.git"
+    "url": "https://github.com/videojs/videojs-4to5.git"
   },
   "scripts": {
     "test": "jshint src/ bin/ && mocha test/replacer.js && karma start test/karma.config.js"
