@@ -1,13 +1,13 @@
 # videojs-4to5
 
-This is a small NodeJS script to help with bringing video.js 4.x code up to speed with changes in video.js 5.0.
+This provides two tools to ease the transition from video.js 4.x to 5.x.
 
-## How do?
+## The `videojs-4to5` Binary
 
-Install the module globally:
+When installed globally, this package creates a binary which can be used to automatically refactor code written for video.js 4.x to work with 5.x.
 
 ```bash
-npm install -g git+ssh://git@bithub.brightcove.com:videocloud/videojs-4to5
+npm install -g videojs-4to5
 ```
 
 Run the script in a shell, pass it directories and/or files:
@@ -16,8 +16,12 @@ Run the script in a shell, pass it directories and/or files:
 videojs-4to5 my-project some-file.js
 ```
 
-All JavaScript files will be edited in place (unless you do a `--dry-run`) to make changes for video.js 5.0 compatibility.
+All JavaScript files will be edited in place (unless you do a `--dry-run`).
 
 ### Options
 
 For all options, see: `videojs-4to5 -h`.
+
+## The Plugin
+
+This package also includes a plugin (`src/plugin.js`) which can be included in your web page(s) to shim in video.js 4.x APIs to a 5.x environment.
