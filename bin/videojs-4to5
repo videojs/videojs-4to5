@@ -32,7 +32,7 @@ var args = argv.option([{
   type: 'list',
   description: [
     'Use multiple times to ignore directory names (e.g., --ignore-dir=dist ',
-    '--ignore-dir=build). node_modules is always ignored.'
+    '--ignore-dir=build). bower_components and node_modules are always ignored.'
   ].join('')
 }]).run();
 
