@@ -24,4 +24,4 @@ For all options, see: `videojs-4to5 -h`.
 
 ## The Plugin
 
-This package also includes a plugin (`src/plugin.js`) which can be included in your web page(s) to shim in video.js 4.x APIs to a 5.x environment.
+We recommend using the binary to update your code, but this package also includes a plugin (`src/plugin.js`) which can be included in your web page(s) to shim in video.js 4.x APIs to a 5.x environment. This shimming is not meant to provide perfect 1:1 compatibility, but it should address virtually all use-cases.
