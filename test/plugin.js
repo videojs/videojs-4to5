@@ -1,3 +1,6 @@
+/* global describe, expect, it, videojs, vjs */
+/* jshint expr:true */
+
 describe('compatibility script', function() {
   it('Functions are restored', function() {
     var constants = [
@@ -16,7 +19,7 @@ describe('compatibility script', function() {
         'TOUCH_ENABLED',
         'BACKGROUND_SIZE_SUPPORTED'
       ],
-      i, constant;
+      i;
 
     for (i = 0; i < constants.length; i++) {
       expect(videojs).ownProperty(constants[i]);

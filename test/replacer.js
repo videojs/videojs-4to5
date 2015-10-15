@@ -1,3 +1,5 @@
+/* global describe, before, it */
+
 var _ = require('lodash');
 var assert = require('assert');
 var replacer = require('../src/lib/replacer');

@@ -1,6 +1,5 @@
 {
   "browser": true,
-  "camelcase": true,
   "curly": true,
   "debug": true,
   "eqeqeq": true,
