@@ -16,7 +16,7 @@ var args = argv.option([{
     'Outputs changes to new files (without overwriting). For example, the ',
     'file "foo.js" will have its changes saved to "videojs-4to5.foo.js".',
     'Files with this prefix will be ignored on subsequent runs. This option ',
-    'supercedes --file-list.'
+    'supercedes --list.'
   ].join('')
 }, {
   name: 'double-quotes',
