@@ -1,6 +1,6 @@
 module.exports = function(config) {
   config.set({
-    frameworks: ['mocha', 'chai'],
+    frameworks: ['mocha', 'chai', 'detectBrowsers'],
 
     reporters: ['mocha'],
 
@@ -8,10 +8,12 @@ module.exports = function(config) {
 
     loggers: [],
 
-    browsers: !process.env.TRAVIS ? [
-      'Chrome',
-      'Firefox'
-    ] : process.env.BROWSER_STACK_USERNAME ? [
+    detectBrowsers: {
+      enabled: !process.env.TRAVIS,
+      usePhantomJS: false
+    },
+
+    browsers: process.env.BROWSER_STACK_USERNAME ? [
       'chrome_bs',
       'firefox_bs',
       'safari_bs',
