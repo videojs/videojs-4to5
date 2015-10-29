@@ -5,8 +5,9 @@
   "author": "Brightcove",
   "copyright": "Copyright Brightcove, Inc. <https://www.brightcove.com/>",
   "license": "Apache-2.0",
+  "main": "./src/main.js",
   "bin": {
-    "videojs-4to5": "bin/videojs-4to5"
+    "videojs-4to5": "./bin/videojs-4to5"
   },
   "dependencies": {
     "argv": "0.0.x",
