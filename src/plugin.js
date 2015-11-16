@@ -62,7 +62,7 @@
 
       Component.prototype.createEl = function() {
         var el = createEl.apply(this, arguments);
-        this.addClass(className);
+        el.className += ' ' + className;
         return el;
       };
     });
