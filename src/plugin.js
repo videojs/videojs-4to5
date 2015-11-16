@@ -3,7 +3,7 @@
     Component = videojs.getComponent('Component'),
     keys = Object.keys(videojs.browser),
     components = Object.keys(Component.components_),
-    i, key, component,
+    oldOptions, i, key, component,
 
     // Some classes changed between video.js 4 and 5. This back-fills those
     // to restore the old classes for styling or scripting purposes.
@@ -67,6 +67,19 @@
       };
     });
   });
+
+  oldOptions = videojs.Player.prototype.options;
+  videojs.Player.prototype.options = function() {
+    var options = oldOptions.call(this);
+    if (Object.prototype.toString.call(options.children) === '[object Array]') {
+      for (var i = 0; i < options.children.length; i++) {
+        var childName = options.children[i];
+        options.children[childName] = this.getChild(childName);
+      }
+    }
+
+    return options;
+  };
 
   videojs.round = function(x, y) {
     videojs.log.warn('videojs.round(x, y) is deprecated. ' +

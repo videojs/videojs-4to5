@@ -30,7 +30,7 @@
     "karma-safari-launcher": "^0.1.1",
     "mocha": "2.x.x",
     "qunitjs": "^1.19.0",
-    "video.js": "^5.0.0-rc.90"
+    "video.js": "^5.2.1"
   },
   "repository": {
     "type": "git",
