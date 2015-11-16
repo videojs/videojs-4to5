@@ -3,7 +3,21 @@
     Component = videojs.getComponent('Component'),
     keys = Object.keys(videojs.browser),
     components = Object.keys(Component.components_),
-    i, key, component;
+    i, key, component,
+
+    // Some classes changed between video.js 4 and 5. This back-fills those
+    // to restore the old classes for styling or scripting purposes.
+    backfillClasses = {
+      'vjs-time-controls': [
+        'TimeDivider',
+        'RemainingTimeDisplay',
+        'DurationDisplay',
+        'CurrentTimeDisplay'
+      ],
+      'vjs-live-controls': [
+        'LiveDisplay'
+      ]
+    };
 
   window.vjs = videojs;
 
@@ -40,6 +54,19 @@
       videojs[component].extend = Component.extend;
     }
   }
+
+  Object.keys(backfillClasses).forEach(function(className) {
+    backfillClasses[className].forEach(function(name) {
+      var Component = videojs.getComponent(name);
+      var createEl = Component.prototype.createEl;
+
+      Component.prototype.createEl = function() {
+        var el = createEl.apply(this, arguments);
+        this.addClass(className);
+        return el;
+      };
+    });
+  });
 
   videojs.round = function(x, y) {
     videojs.log.warn('videojs.round(x, y) is deprecated. ' +
