@@ -74,7 +74,7 @@
     if (Object.prototype.toString.call(options.children) === '[object Array]') {
       for (var i = 0; i < options.children.length; i++) {
         var childName = options.children[i];
-        options.children[childName] = this.getChild(childName);
+        options.children[childName] = this.getChild(childName).options_;
       }
     }
 
