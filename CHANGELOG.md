@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v1.1.0 (2015-11-17)
+
+- @jforbes Use all available desktop browsers
+- @misteroneill Back-fill changed classes on relevant components
+- @gkatsev Wrap Player.prototype.options
+- @misteroneill Cleanup and Tests
+- @misteroneill Set up a basic pre-publish build
+
 ## v1.0.2 (2015-10-29)
 
 - @misteroneill Fix broken `npm install`.
