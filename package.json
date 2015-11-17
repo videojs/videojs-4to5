@@ -1,7 +1,7 @@
 {
   "name": "videojs-4to5",
   "description": "This is a script to help with bringing video.js 4.x code up to speed with changes in video.js 5.0.",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "author": "Brightcove",
   "copyright": "Copyright Brightcove, Inc. <https://www.brightcove.com/>",
   "license": "Apache-2.0",
