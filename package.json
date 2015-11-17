@@ -30,6 +30,7 @@
     "karma-safari-launcher": "^0.1.1",
     "mocha": "2.x.x",
     "qunitjs": "^1.19.0",
+    "uglify-js": "^2.6.1",
     "video.js": "^5.2.1"
   },
   "repository": {
@@ -37,6 +38,8 @@
     "url": "https://github.com/videojs/videojs-4to5.git"
   },
   "scripts": {
+    "prepublish": "mkdir -p dist && cp src/plugin.js dist/plugin.js && uglifyjs dist/plugin.js -m -o dist/plugin.min.js",
+    "preversion": "npm test",
     "test": "jshint src/ bin/ && mocha test/replacer.js && karma start test/karma.config.js"
   }
 }
