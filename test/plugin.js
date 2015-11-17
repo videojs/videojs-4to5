@@ -2,38 +2,59 @@
 /* jshint expr:true */
 
 describe('compatibility script', function() {
-  it('Functions are restored', function() {
-    var constants = [
-        'IS_IPHONE',
-        'IS_IPAD',
-        'IS_IPOD',
-        'IS_IOS',
-        'IOS_VERSION',
-        'IS_ANDROID',
-        'ANDROID_VERSION',
-        'IS_OLD_ANDROID',
-        'IS_NATIVE_ANDROID',
-        'IS_FIREFOX',
-        'IS_CHROME',
-        'IS_IE8',
-        'TOUCH_ENABLED',
-        'BACKGROUND_SIZE_SUPPORTED'
+
+  it('maps browser properties onto videojs', function() {
+    Object.keys(videojs.browser).forEach(function(key) {
+      expect(videojs[key]).to.equal(videojs.browser[key]);
+    });
+  });
+
+  it('maps components onto videojs and makes sure they can be extended', function() {
+    Object.keys(videojs.getComponent('Component').components_).forEach(function(key) {
+      expect(videojs[key]).to.equal(videojs.getComponent(key));
+      expect(videojs[key].extend).to.be.a('function');
+    });
+  });
+
+  it('restores missing/previously deprecated functions and objects', function() {
+    expect(window.vjs).to.equal(videojs);
+    expect(videojs.JSON).to.equal(window.JSON);
+    expect(videojs.USER_AGENT).to.equal(window.navigator.userAgent);
+    expect(videojs.EventEmitter).to.equal(videojs.EventTarget);
+    expect(videojs.obj.isArray).to.equal(Array.isArray);
+
+    expect(videojs.util.mergeOptions).to.be.a('function');
+    expect(videojs.round).to.be.a('function');
+    expect(videojs.trim).to.be.a('function');
+  });
+
+  describe('HTML class backfills', function() {
+    var backfills = {
+      'vjs-time-controls': [
+        'TimeDivider',
+        'RemainingTimeDisplay',
+        'DurationDisplay',
+        'CurrentTimeDisplay'
       ],
-      i;
+      'vjs-live-controls': [
+        'LiveDisplay'
+      ]
+    };
 
-    for (i = 0; i < constants.length; i++) {
-      expect(videojs).ownProperty(constants[i]);
-    }
+    var Player = videojs.getComponent('Player');
+    var video = document.createElement('video');
+    var player = new Player(video);
 
-    expect(vjs).to.exist;
-    expect(videojs.util.mergeOptions).to.exist;
-    expect(videojs.JSON).to.exist;
-    expect(videojs.USER_AGENT).to.exist;
-    expect(videojs.EventEmitter).to.exist;
+    Object.keys(backfills).forEach(function(className) {
+      backfills[className].forEach(function(compName) {
+        var Component = videojs.getComponent(compName);
 
-    expect(videojs.Button.extend).to.exist;
+        it('restores "' + className + '" on "' + compName + '"', function() {
+          var component = new Component(player, {});
 
-    expect(videojs.round).to.exist;
-    expect(videojs.trim).to.exist;
+          expect(component.hasClass(className)).to.be.true;
+        });
+      });
+    });
   });
 });
