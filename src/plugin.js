@@ -26,12 +26,11 @@
   // now an array. This restores the old behavior of that property (while
   // retaining array behavior).
   Component.prototype.options = function() {
-    var component = this;
-    var options = originals.options.apply(component, arguments);
+    var options = originals.options.apply(this, arguments);
     if (Array.isArray(options.children)) {
       options.children.forEach(function(childName) {
-        options.children[childName] = component.getChild(childName).options_;
-      });
+        options.children[childName] = this.getChild(childName).options_;
+      }, this);
     }
     return options;
   };
