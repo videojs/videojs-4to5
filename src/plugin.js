@@ -26,10 +26,11 @@
   // now an array. This restores the old behavior of that property (while
   // retaining array behavior).
   Component.prototype.options = function() {
-    var options = originals.options.apply(this, arguments);
+    var component = this;
+    var options = originals.options.apply(component, arguments);
     if (Array.isArray(options.children)) {
       options.children.forEach(function(childName) {
-        options.children[childName] = this.getChild(childName).options_;
+        options.children[childName] = component.getChild(childName).options_;
       });
     }
     return options;
@@ -42,7 +43,7 @@
     if (proto.remainingTime && !proto.scrubbing) {
       proto.scrubbing = function() {};
     }
-    return originals.extend(proto);
+    return originals.extend.call(this, proto);
   };
 
   Object.keys(Component.components_).forEach(function(compName) {
