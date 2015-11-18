@@ -10,7 +10,8 @@
       options: Component.prototype.options
     },
     Player: {
-      dimension: Player.prototype.dimension
+      dimension: Player.prototype.dimension,
+      updateStyleEl_: Player.prototype.updateStyleEl_
     }
   };
 
@@ -26,6 +27,10 @@
     'vjs-live-controls': [
       'LiveDisplay'
     ]
+  };
+
+  var isPct = function(v) {
+    return v && typeof v === 'string' && v.indexOf('%') !== 1;
   };
 
   // The `children` property of `options_` used to be an object, but it is
@@ -78,76 +83,87 @@
     });
   });
 
+
+
   // Backfill support for %-based dimensions in players. Includes copy/
   // pasted code from the `updateStyleEl_` method in video.js 5 because
   // that hard-codes px. :-/
   Player.prototype.dimension = function(dimension, value) {
-    var aspectRatio, ratioParts, ratioMultiplier, width, height;
-
-    var isPct = function (v) {
-      return v && typeof v === 'string' && v.indexOf('%') !== 1;
-    };
 
     // When the value is set as a %, bypass the usual handling.
-    if (isPct(v)) {
+    if (isPct(value)) {
       this[dimension + '_'] = value;
-
-      // The aspect ratio is either used directly or to calculate width and height.
-      if (this.aspectRatio_ !== undefined && this.aspectRatio_ !== 'auto') {
-        // Use any aspectRatio that's been specifically set
-        aspectRatio = this.aspectRatio_;
-      } else if (this.videoWidth()) {
-        // Otherwise try to get the aspect ratio from the video metadata
-        aspectRatio = this.videoWidth() + ':' + this.videoHeight();
-      } else {
-        // Or use a default. The video element's is 2:1, but 16:9 is more common.
-        aspectRatio = '16:9';
-      }
-
-      // Get the ratio as a decimal we can use to calculate dimensions
-      let ratioParts = aspectRatio.split(':');
-      let ratioMultiplier = ratioParts[1] / ratioParts[0];
-
-      if (this.width_ !== undefined) {
-        // Use any width that's been specifically set
-        width = this.width_;
-      } else if (this.height_ !== undefined) {
-        // Or calulate the width from the aspect ratio if a height has been set
-        width = this.height_ / ratioMultiplier;
-      } else {
-        // Or use the video's metadata, or use the video el's default of 300
-        width = this.videoWidth() || 300;
-      }
-
-      if (this.height_ !== undefined) {
-        // Use any height that's been specifically set
-        height = this.height_;
-      } else {
-        // Otherwise calculate the height from the ratio and the width
-        height = width  * ratioMultiplier;
-      }
-
-      let idClass = this.id()+'-dimensions';
-
-      // Ensure the right class is still on the player for the style element
-      this.addClass(idClass);
-
-      stylesheet.setTextContent(this.styleEl_, [
-        '.', idClass, '{',
-          'width:', width, (isPct(width) ? ';' : 'px;'),
-          'height:', height, (isPct(height) ? ';' : 'px;'),
-        '}',
-        '.', idClass, '.vjs-fluid {',
-          'padding-top:', ratioMultiplier * 100, '%;',
-        '}'
-      ].join(''));
-
+      this.updateStyleEl_();
       return this;
     }
 
     // In all other cases, use the video.js 5.x handling.
     return originals.Player.dimension.call(this, dimension, value);
   };
+
+  Player.prototype.updateStyleEl_ = function() {
+    var aspectRatio, ratioParts, ratioMultiplier, width, height, idClass, styles;
+
+    // The aspect ratio is either used directly or to calculate width and height.
+    if (this.aspectRatio_ !== undefined && this.aspectRatio_ !== 'auto') {
+      // Use any aspectRatio that's been specifically set
+      aspectRatio = this.aspectRatio_;
+    } else if (this.videoWidth()) {
+      // Otherwise try to get the aspect ratio from the video metadata
+      aspectRatio = this.videoWidth() + ':' + this.videoHeight();
+    } else {
+      // Or use a default. The video element's is 2:1, but 16:9 is more common.
+      aspectRatio = '16:9';
+    }
+
+    // Get the ratio as a decimal we can use to calculate dimensions
+    ratioParts = aspectRatio.split(':');
+    ratioMultiplier = ratioParts[1] / ratioParts[0];
+
+    if (this.width_ !== undefined) {
+      // Use any width that's been specifically set
+      width = this.width_;
+    } else if (this.height_ !== undefined) {
+      // Or calulate the width from the aspect ratio if a height has been set
+      width = this.height_ / ratioMultiplier;
+    } else {
+      // Or use the video's metadata, or use the video el's default of 300
+      width = this.videoWidth() || 300;
+    }
+
+    if (this.height_ !== undefined) {
+      // Use any height that's been specifically set
+      height = this.height_;
+    } else {
+      // Otherwise calculate the height from the ratio and the width
+      height = width  * ratioMultiplier;
+    }
+
+    idClass = this.id()+'-dimensions';
+
+    // Ensure the right class is still on the player for the style element
+    this.addClass(idClass);
+
+    styles = [
+      '.', idClass, '{',
+        'width:', width, (isPct(width) ? ';' : 'px;'),
+        'height:', height, (isPct(height) ? ';' : 'px;'),
+      '}',
+      '.', idClass, '.vjs-fluid {',
+        'padding-top:', ratioMultiplier * 100, '%;',
+      '}'
+    ].join('');
+
+    if (this.styleEl_.styleSheet) {
+      this.styleEl_.styleSheet.cssText = styles;
+    } else {
+      this.styleEl_.textContent = styles;
+    }
+
+    return this;
+  };
+
+  Player
 
 
   // Map properties of `videojs.browser` onto `videojs`.
