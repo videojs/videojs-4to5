@@ -30,7 +30,7 @@
     if (Array.isArray(options.children)) {
       options.children.forEach(function(childName) {
         options.children[childName] = this.getChild(childName).options_;
-      });
+      }, this);
     }
     return options;
   };
@@ -42,7 +42,7 @@
     if (proto.remainingTime && !proto.scrubbing) {
       proto.scrubbing = function() {};
     }
-    return originals.extend(proto);
+    return originals.extend.call(this, proto);
   };
 
   Object.keys(Component.components_).forEach(function(compName) {
