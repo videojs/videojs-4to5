@@ -163,9 +163,6 @@
     return this;
   };
 
-  Player
-
-
   // Map properties of `videojs.browser` onto `videojs`.
   Object.keys(videojs.browser).forEach(function(key) {
     videojs[key] = videojs.browser[key];
