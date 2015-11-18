@@ -1,11 +1,17 @@
 (function(window, videojs) {
   var Component = videojs.getComponent('Component');
+  var Player = videojs.getComponent('Player');
 
   // Cache new video.js 5.x methods that we will override for better
   // backward compatibility.
   var originals = {
-    extend: Component.extend,
-    options: Component.prototype.options
+    Component: {
+      extend: Component.extend,
+      options: Component.prototype.options
+    },
+    Player: {
+      dimension: Player.prototype.dimension
+    }
   };
 
   // Some classes changed between video.js 4 and 5. This back-fills those
@@ -26,7 +32,7 @@
   // now an array. This restores the old behavior of that property (while
   // retaining array behavior).
   Component.prototype.options = function() {
-    var options = originals.options.apply(this, arguments);
+    var options = originals.Component.options.apply(this, arguments);
     if (Array.isArray(options.children)) {
       options.children.forEach(function(childName) {
         options.children[childName] = this.getChild(childName).options_;
@@ -37,12 +43,12 @@
 
   // Replace the static `extend` method of components with one that works
   // with the assumptions of video.js 4.x, while retaining the new behavior
-  // in `originals.extend`.
+  // in `originals.Component.extend`.
   Component.extend = function(proto) {
     if (proto.remainingTime && !proto.scrubbing) {
       proto.scrubbing = function() {};
     }
-    return originals.extend.call(this, proto);
+    return originals.Component.extend.call(this, proto);
   };
 
   Object.keys(Component.components_).forEach(function(compName) {
@@ -71,6 +77,21 @@
       };
     });
   });
+
+  // Backfill support for %-based dimensions in players.
+  Player.prototype.dimension = function(dimension, value) {
+
+    // When the value is set as a %, bypass the usual handling.
+    if (value && typeof value === 'string' && value.indexOf('%') !== 1) {
+      this[dimension + '_'] = value;
+      this.updateStyleEl_();
+      return this;
+    }
+
+    // In all other cases, use the video.js 5.x handling.
+    return originals.Player.dimension.call(this, dimension, value);
+  };
+
 
   // Map properties of `videojs.browser` onto `videojs`.
   Object.keys(videojs.browser).forEach(function(key) {
