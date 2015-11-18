@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v.1.1.1 (2015-11-18)
+- @gkatsev Fix issues with extend and options
+
 ## v1.1.0 (2015-11-17)
 
 - @jforbes Use all available desktop browsers
