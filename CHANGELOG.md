@@ -1,6 +1,9 @@
 # CHANGELOG
 
-## v.1.1.1 (2015-11-18)
+## v1.2.0 (2015-11-19)
+- @misteroneill make % dimensions work on the player
+
+## v1.1.1 (2015-11-18)
 - @gkatsev Fix issues with extend and options
 
 ## v1.1.0 (2015-11-17)
