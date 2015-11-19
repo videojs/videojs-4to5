@@ -85,9 +85,8 @@
 
 
 
-  // Backfill support for %-based dimensions in players. Includes copy/
-  // pasted code from the `updateStyleEl_` method in video.js 5 because
-  // that hard-codes px. :-/
+  // Backfill support for %-based dimensions in players, which was
+  // supported in video.js 4.x.
   Player.prototype.dimension = function(dimension, value) {
 
     // When the value is set as a %, bypass the usual handling.
@@ -101,8 +100,13 @@
     return originals.Player.dimension.call(this, dimension, value);
   };
 
+  // This method must be overridden because if the original video.js 5.x
+  // method is called on a player with percentage sizing, the dimension
+  // in CSS will be set to "100%px" as an example. Also, this sets styles
+  // inline instead of writing to a stylesheet because that's how 4.x
+  // worked! Most of this method is copy/pasted... unfortunately.
   Player.prototype.updateStyleEl_ = function() {
-    var aspectRatio, ratioParts, ratioMultiplier, width, height, idClass, styles;
+    var aspectRatio, ratioParts, ratioMultiplier, width, height;
 
     // The aspect ratio is either used directly or to calculate width and height.
     if (this.aspectRatio_ !== undefined && this.aspectRatio_ !== 'auto') {
@@ -136,29 +140,11 @@
       height = this.height_;
     } else {
       // Otherwise calculate the height from the ratio and the width
-      height = width  * ratioMultiplier;
+      height = width * ratioMultiplier;
     }
 
-    idClass = this.id()+'-dimensions';
-
-    // Ensure the right class is still on the player for the style element
-    this.addClass(idClass);
-
-    styles = [
-      '.', idClass, '{',
-        'width:', width, (isPct(width) ? ';' : 'px;'),
-        'height:', height, (isPct(height) ? ';' : 'px;'),
-      '}',
-      '.', idClass, '.vjs-fluid {',
-        'padding-top:', ratioMultiplier * 100, '%;',
-      '}'
-    ].join('');
-
-    if (this.styleEl_.styleSheet) {
-      this.styleEl_.styleSheet.cssText = styles;
-    } else {
-      this.styleEl_.textContent = styles;
-    }
+    this.el().style.width = isPct(width) ? width : width + 'px';
+    this.el().style.height = isPct(height) ? height : height + 'px';
 
     return this;
   };
