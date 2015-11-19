@@ -106,7 +106,7 @@
   // inline instead of writing to a stylesheet because that's how 4.x
   // worked! Most of this method is copy/pasted... unfortunately.
   Player.prototype.updateStyleEl_ = function() {
-    var aspectRatio, ratioParts, ratioMultiplier, width, height;
+    var aspectRatio, ratioParts, ratioMultiplier, width, height, idClass, styles;
 
     // The aspect ratio is either used directly or to calculate width and height.
     if (this.aspectRatio_ !== undefined && this.aspectRatio_ !== 'auto') {
@@ -145,6 +145,30 @@
 
     this.el().style.width = isPct(width) ? width : width + 'px';
     this.el().style.height = isPct(height) ? height : height + 'px';
+
+    // Also update the style element as in video.js 5.x.
+    idClass = this.id()+'-dimensions';
+
+    // Ensure the right class is still on the player for the style element
+    this.addClass(idClass);
+
+    styles = [
+      '.', idClass, '{',
+        'width:', width, (isPct(width) ? ';' : 'px;'),
+        'height:', height, (isPct(height) ? ';' : 'px;'),
+      '}',
+      '.', idClass, '.vjs-fluid {',
+        'padding-top:', ratioMultiplier * 100, '%;',
+      '}'
+    ].join('');
+
+    if (this.styleEl_) {
+      if (this.styleEl_.styleSheet) {
+        this.styleEl_.styleSheet.cssText = styles;
+      } else {
+        this.styleEl_.textContent = styles;
+      }
+    }
 
     return this;
   };
