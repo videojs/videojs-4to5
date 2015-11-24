@@ -30,7 +30,7 @@
   };
 
   var isPct = function(v) {
-    return v && typeof v === 'string' && v.indexOf('%') !== 1;
+    return v && typeof v === 'string' && v.indexOf('%') === (v.length - 1);
   };
 
   // The `children` property of `options_` used to be an object, but it is
