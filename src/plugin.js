@@ -101,51 +101,7 @@
   };
 
   // Roll back player dimension behavior to 4.x compatibility.
-  Player.prototype.dimension = function(dimension, num, skipListeners) {
-    var val, pxIndex;
-
-    if (num !== undefined) {
-
-      // num !== num is a NaN check pulled from video.js 4.x.
-      if (!this.el_ || num === null || num !== num) {
-        num = 0;
-      }
-
-      // Check if using css width/height (% or px) and adjust
-      if ((''+num).indexOf('%') !== -1 || (''+num).indexOf('px') !== -1) {
-        this.el_.style[dimension] = num;
-      } else if (num === 'auto') {
-        this.el_.style[dimension] = '';
-      } else {
-        this.el_.style[dimension] = num+'px';
-      }
-
-      // skipListeners allows us to avoid triggering the resize event when setting both width and height
-      if (!skipListeners) { this.trigger('resize'); }
-
-      // Return component
-      return this;
-    }
-
-    // Make sure element exists
-    if (!this.el_) return 0;
-
-    // Get dimension value from style
-    val = this.el_.style[dimension];
-    pxIndex = val.indexOf('px');
-
-    if (pxIndex !== -1) {
-      // Return the pixel value with no 'px'
-      return parseInt(val.slice(0,pxIndex), 10);
-
-    // No px so using % or no style was set, so falling back to offsetWidth/height
-    // If component has display:none, offset will return 0
-    // TODO: handle display:none and no dimension style using px
-    } else {
-
-      return parseInt(this.el_['offset'+(dimension.charAt(0).toUpperCase() + dimension.slice(1))], 10);
-    }
-  };
+  Player.prototype.dimension = Component.prototype.dimension;
 
   // Map properties of `videojs.browser` onto `videojs`.
   Object.keys(videojs.browser).forEach(function(key) {
