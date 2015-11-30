@@ -10,8 +10,8 @@
       options: Component.prototype.options
     },
     Player: {
-      dimension: Player.prototype.dimension,
-      updateStyleEl_: Player.prototype.updateStyleEl_
+      createEl: Player.prototype.createEl,
+      dimension: Player.prototype.dimension
     }
   };
 
@@ -83,94 +83,68 @@
     });
   });
 
+  // We want 4.x-style sizing; so, new methods that are related, but are
+  // not used by 4.x-style resizing are rendered no-op.
+  ['aspectRatio', 'fluid', 'updateStyleEl_'].forEach(function(methodName) {
+    originals.Player[methodName] = Player.prototype[methodName];
+    Player.prototype[methodName] = Function.prototype;
+  });
 
+  // We want to un-create the styleEl_ because for 4.x-style dimensions, we
+  // don't need the style element confusing the issue.
+  Player.prototype.createEl = function() {
+    var el = originals.Player.createEl.apply(this, arguments);
+    if (this.styleEl_) {
+      this.styleEl_.parentNode.removeChild(this.styleEl_);
+    }
+    return el;
+  };
 
-  // Backfill support for %-based dimensions in players, which was
-  // supported in video.js 4.x.
-  Player.prototype.dimension = function(dimension, value) {
+  // Roll back player dimension behavior to 4.x compatibility.
+  Player.prototype.dimension = function(dimension, num, skipListeners) {
+    var val, pxIndex;
 
-    // When the value is set as a %, bypass the usual handling.
-    if (isPct(value)) {
-      this[dimension + '_'] = value;
-      this.updateStyleEl_();
+    if (num !== undefined) {
+
+      // num !== num is a NaN check pulled from video.js 4.x.
+      if (!this.el_ || num === null || num !== num) {
+        num = 0;
+      }
+
+      // Check if using css width/height (% or px) and adjust
+      if ((''+num).indexOf('%') !== -1 || (''+num).indexOf('px') !== -1) {
+        this.el_.style[dimension] = num;
+      } else if (num === 'auto') {
+        this.el_.style[dimension] = '';
+      } else {
+        this.el_.style[dimension] = num+'px';
+      }
+
+      // skipListeners allows us to avoid triggering the resize event when setting both width and height
+      if (!skipListeners) { this.trigger('resize'); }
+
+      // Return component
       return this;
     }
 
-    // In all other cases, use the video.js 5.x handling.
-    return originals.Player.dimension.call(this, dimension, value);
-  };
+    // Make sure element exists
+    if (!this.el_) return 0;
 
-  // This method must be overridden because if the original video.js 5.x
-  // method is called on a player with percentage sizing, the dimension
-  // in CSS will be set to "100%px" as an example. Also, this sets styles
-  // inline instead of writing to a stylesheet because that's how 4.x
-  // worked! Most of this method is copy/pasted... unfortunately.
-  Player.prototype.updateStyleEl_ = function() {
-    var aspectRatio, ratioParts, ratioMultiplier, width, height, idClass, styles;
+    // Get dimension value from style
+    val = this.el_.style[dimension];
+    pxIndex = val.indexOf('px');
 
-    // The aspect ratio is either used directly or to calculate width and height.
-    if (this.aspectRatio_ !== undefined && this.aspectRatio_ !== 'auto') {
-      // Use any aspectRatio that's been specifically set
-      aspectRatio = this.aspectRatio_;
-    } else if (this.videoWidth()) {
-      // Otherwise try to get the aspect ratio from the video metadata
-      aspectRatio = this.videoWidth() + ':' + this.videoHeight();
+    if (pxIndex !== -1) {
+      // Return the pixel value with no 'px'
+      return parseInt(val.slice(0,pxIndex), 10);
+
+    // No px so using % or no style was set, so falling back to offsetWidth/height
+    // If component has display:none, offset will return 0
+    // TODO: handle display:none and no dimension style using px
     } else {
-      // Or use a default. The video element's is 2:1, but 16:9 is more common.
-      aspectRatio = '16:9';
+
+      return parseInt(this.el_['offset'+(dimension.charAt(0).toUpperCase() + dimension.slice(1))], 10);
     }
-
-    // Get the ratio as a decimal we can use to calculate dimensions
-    ratioParts = aspectRatio.split(':');
-    ratioMultiplier = ratioParts[1] / ratioParts[0];
-
-    if (this.width_ !== undefined) {
-      // Use any width that's been specifically set
-      width = this.width_;
-    } else if (this.height_ !== undefined) {
-      // Or calulate the width from the aspect ratio if a height has been set
-      width = this.height_ / ratioMultiplier;
-    } else {
-      // Or use the video's metadata, or use the video el's default of 300
-      width = this.videoWidth() || 300;
-    }
-
-    if (this.height_ !== undefined) {
-      // Use any height that's been specifically set
-      height = this.height_;
-    } else {
-      // Otherwise calculate the height from the ratio and the width
-      height = width * ratioMultiplier;
-    }
-
-    this.el().style.width = isPct(width) ? width : width + 'px';
-    this.el().style.height = isPct(height) ? height : height + 'px';
-
-    // Also update the style element as in video.js 5.x.
-    idClass = this.id()+'-dimensions';
-
-    // Ensure the right class is still on the player for the style element
-    this.addClass(idClass);
-
-    styles = [
-      '.', idClass, '{',
-        'width:', width, (isPct(width) ? ';' : 'px;'),
-        'height:', height, (isPct(height) ? ';' : 'px;'),
-      '}',
-      '.', idClass, '.vjs-fluid {',
-        'padding-top:', ratioMultiplier * 100, '%;',
-      '}'
-    ].join('');
-
-    if (this.styleEl_) {
-      if (this.styleEl_.styleSheet) {
-        this.styleEl_.styleSheet.cssText = styles;
-      } else {
-        this.styleEl_.textContent = styles;
-      }
-    }
-
-    return this;
   };
 
   // Map properties of `videojs.browser` onto `videojs`.
