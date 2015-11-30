@@ -29,10 +29,6 @@
     ]
   };
 
-  var isPct = function(v) {
-    return v && typeof v === 'string' && v.indexOf('%') === (v.length - 1);
-  };
-
   // The `children` property of `options_` used to be an object, but it is
   // now an array. This restores the old behavior of that property (while
   // retaining array behavior).
