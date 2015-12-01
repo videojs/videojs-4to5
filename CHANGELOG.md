@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.3.0 (2015-12-01)
+- @misteroneill Fully restore 4.x dimension handling in plugin
+
+## v1.2.1 (2015-11-19)
+- @gkatsev Fix %-based dimension detection.
+
 ## v1.2.0 (2015-11-19)
 - @misteroneill make % dimensions work on the player
 
