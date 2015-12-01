@@ -40,8 +40,10 @@
   "scripts": {
     "build": "rm -rf dist && mkdir -p dist && cp src/plugin.js dist/plugin.js && uglifyjs dist/plugin.js -m -o dist/plugin.min.js",
     "clean": "rm -rf dist",
+    "lint": "jshint src/ bin/",
     "prepublish": "npm run build",
     "preversion": "npm test",
-    "test": "jshint src/ bin/ && mocha test/replacer.js && karma start test/karma.config.js"
+    "pretest": "npm run lint",
+    "test": "mocha test/replacer.js && karma start test/karma.config.js"
   }
 }
