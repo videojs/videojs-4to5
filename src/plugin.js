@@ -52,6 +52,26 @@
     return originals.Component.extend.call(this, proto);
   };
 
+  // Retore the video.js 4.x SliderHandle component. This is NOT used in the
+  // video.js 5.x Slider component, but is provided for users who were
+  // previously sub-classing this component!
+  videojs.registerComponent('SliderHandle', videojs.extend(Component, {
+    defaultValue: 0,
+
+    createEl: function(type, props) {
+      props = props || {};
+
+      // Add the slider element class to all sub classes
+      props.className = (props.className || '') + ' vjs-slider-handle';
+
+      if (!props.innerHTML) {
+        props.innerHTML = '<span class="vjs-control-text">' + this.defaultValue + '</span>';
+      }
+
+      return Component.prototype.createEl.call(this, 'div', props);
+    }
+  }));
+
   Object.keys(Component.components_).forEach(function(compName) {
 
     // Map each component onto `videojs` itself.
