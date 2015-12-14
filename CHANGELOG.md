@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.4.0 (2015-12-14)
+- @misteroneill Restore 4.x `SliderHandle` component
+
 ## v1.3.0 (2015-12-01)
 - @misteroneill Fully restore 4.x dimension handling in plugin
 
