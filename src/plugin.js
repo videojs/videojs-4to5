@@ -125,7 +125,6 @@
   });
 
   // Restore missing/previously deprecated objects and methods.
-  window.vjs = videojs;
   videojs.JSON = JSON;
   videojs.USER_AGENT = window.navigator.userAgent;
   videojs.EventEmitter = videojs.EventTarget;
@@ -157,4 +156,5 @@
     isArray: Array.isArray
   };
 
+  window.vjs = videojs;
 })(window, window.videojs);
