@@ -153,7 +153,14 @@
   };
 
   videojs.obj = {
-    isArray: Array.isArray
+    isArray: Array.isArray,
+    each: function(obj, fn, context) {
+      for (var key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          fn.call(context || this, key, obj[key]);
+        }
+      }
+    }
   };
 
   window.vjs = videojs;
