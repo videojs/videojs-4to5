@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.4.1 (2015-12-18)
+- @misteroneill Don't use `Function.prototype` for noop.
+
 ## v1.4.0 (2015-12-14)
 - @misteroneill Restore 4.x `SliderHandle` component
 
