@@ -103,7 +103,7 @@
   // not used by 4.x-style resizing are rendered no-op.
   ['aspectRatio', 'fluid', 'updateStyleEl_'].forEach(function(methodName) {
     originals.Player[methodName] = Player.prototype[methodName];
-    Player.prototype[methodName] = Function.prototype;
+    Player.prototype[methodName] = function(){};
   });
 
   // We want to un-create the styleEl_ because for 4.x-style dimensions, we
