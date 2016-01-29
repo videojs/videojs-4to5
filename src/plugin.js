@@ -169,13 +169,14 @@
     var tech = this.tech_;
     var ownKeys = Object.keys(tech);
     var proto = tech.constructor.prototype;
-    var protoKeys = Object.keys(proto);
 
-    this.polyfilledTechKeys_ = ownKeys.concat(protoKeys.filter(function(key) {
+    // Get the prototype keys filtering out those keys that are own
+    // properties of the tech.
+    var protoKeys = Object.keys(proto).filter(function(key) {
+      return !tech.hasOwnProperty(key);
+    });
 
-      // Only take protoKeys that are NOT found in the ownKeys.
-      return ownKeys.indexOf(key) === -1;
-    }));
+    this.polyfilledTechKeys_ = ownKeys.concat(protoKeys);
 
     // Map tech.prototype and own tech properties onto the tech function as
     // own properties. Methods are bound to the tech object.
