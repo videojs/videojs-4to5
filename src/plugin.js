@@ -167,17 +167,25 @@
     originals.Player.loadTech_.apply(player, arguments);
 
     var tech = this.tech_;
+    var ownKeys = Object.keys(tech);
     var proto = tech.constructor.prototype;
+    var protoKeys = Object.keys(proto);
 
-    this.polyfilledTechKeys_ = Object.keys(proto);
+    this.polyfilledTechKeys_ = ownKeys.concat(protoKeys.filter(function(key) {
 
-    // Map tech.prototype properties onto the tech function as own
-    // properties. Methods are bound to the tech object.
+      // Only take protoKeys that are NOT found in the ownKeys.
+      return ownKeys.indexOf(key) === -1;
+    }));
+
+    // Map tech.prototype and own tech properties onto the tech function as
+    // own properties. Methods are bound to the tech object.
     this.polyfilledTechKeys_.forEach(function(key) {
-      if (typeof proto[key] === 'function') {
-        player.tech[key] = videojs.bind(tech, proto[key]);
+      var value = tech.hasOwnProperty(key) ? tech[key] : proto[key];
+
+      if (typeof value === 'function') {
+        player.tech[key] = videojs.bind(tech, value);
       } else {
-        player.tech[key] = proto[key];
+        player.tech[key] = value;
       }
     });
   };
