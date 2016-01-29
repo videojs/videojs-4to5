@@ -38,12 +38,14 @@
     "url": "https://github.com/videojs/videojs-4to5.git"
   },
   "scripts": {
-    "build": "rm -rf dist && mkdir -p dist && cp src/plugin.js dist/plugin.js && uglifyjs dist/plugin.js -m -o dist/plugin.min.js",
-    "clean": "rm -rf dist",
+    "build": "npm run clean && cp src/plugin.js dist/plugin.js && uglifyjs dist/plugin.js -m -o dist/plugin.min.js",
+    "clean": "rm -rf dist && mkdir -p dist",
     "lint": "jshint src/ bin/",
     "prepublish": "npm run build",
     "preversion": "npm test",
     "pretest": "npm run lint",
-    "test": "mocha test/replacer.js && karma start test/karma.config.js"
+    "test": "npm run test:replacer && npm run test:plugin",
+    "test:replacer": "mocha test/replacer.js",
+    "test:plugin": "karma start test/karma.config.js"
   }
 }
