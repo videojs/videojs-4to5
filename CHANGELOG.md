@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.5.0 (2016-01-29)
+- @misteroneill Polyfill tech properties/methods onto the `tech()` function.
+
 ## v1.4.1 (2015-12-18)
 - @misteroneill Don't use `Function.prototype` for noop.
 
