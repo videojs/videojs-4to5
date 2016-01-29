@@ -11,7 +11,9 @@
     },
     Player: {
       createEl: Player.prototype.createEl,
-      dimension: Player.prototype.dimension
+      dimension: Player.prototype.dimension,
+      loadTech_: Player.prototype.loadTech_,
+      unloadTech_: Player.prototype.unloadTech_
     }
   };
 
@@ -155,6 +157,42 @@
 
   videojs.obj = {
     isArray: Array.isArray
+  };
+
+  // Polyfill the tech function with properties for the current tech. This is
+  // a mostly-complete implementation of the old tech behavior.
+  Player.prototype.loadTech_ = function() {
+    var player = this;
+
+    originals.Player.loadTech_.apply(player, arguments);
+
+    var tech = this.tech_;
+    var proto = tech.constructor.prototype;
+
+    this.polyfilledTechKeys_ = Object.keys(proto);
+
+    // Map tech.prototype properties onto the tech function as own
+    // properties. Methods are bound to the tech object.
+    this.polyfilledTechKeys_.forEach(function(key) {
+      if (typeof proto[key] === 'function') {
+        player.tech[key] = videojs.bind(tech, proto[key]);
+      } else {
+        player.tech[key] = proto[key];
+      }
+    });
+  };
+
+  // Remove the polyfill on the tech function
+  Player.prototype.unloadTech_ = function() {
+    var player = this;
+
+    originals.Player.unloadTech_.apply(player, arguments);
+
+    player.polyfilledTechKeys_.forEach(function(key) {
+      delete player.tech[key];
+    });
+
+    delete player.polyfilledTechKeys_;
   };
 
 })(window, window.videojs);

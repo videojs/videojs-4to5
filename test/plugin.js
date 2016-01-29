@@ -57,4 +57,30 @@ describe('compatibility script', function() {
       });
     });
   });
+
+  describe('tech polyfill', function() {
+    var Player = videojs.getComponent('Player');
+    var video = document.createElement('video');
+    var player = new Player(video);
+
+    it('polyfills the default tech', function() {
+      expect(player.tech).to.be.a('function');
+      expect(player.tech_).to.be.an.instanceof(videojs.getTech('Tech'));
+      expect(player.tech.src).to.be.a('function');
+    });
+
+    it('removes the polyfill when the tech is unloaded', function() {
+      player.unloadTech_();
+      expect(player.tech).to.be.a('function');
+      expect(player.tech_).to.be.false;
+      expect(player.tech.src).to.be.undefined;
+    });
+
+    it('polyfills a newly requested tech', function() {
+      player.loadTech_('Flash');
+      expect(player.tech).to.be.a('function');
+      expect(player.tech_).to.be.an.instanceof(videojs.getTech('Tech'));
+      expect(player.tech.src).to.be.a('function');
+    });
+  });
 });
