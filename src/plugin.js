@@ -13,7 +13,9 @@
       createEl: Player.prototype.createEl,
       dimension: Player.prototype.dimension,
       loadTech_: Player.prototype.loadTech_,
-      unloadTech_: Player.prototype.unloadTech_
+      unloadTech_: Player.prototype.unloadTech_,
+      width: Player.prototype.width,
+      height: Player.prototype.height
     }
   };
 
@@ -29,6 +31,26 @@
     'vjs-live-controls': [
       'LiveDisplay'
     ]
+  };
+
+  // TODO mention player.currentDimension when it is available
+  // this method could even use that then.
+  var dimensionMaker = function(dimension) {
+    return function() {
+      videojs.log.warn([
+        'player.' + dimension + '() has changed to strictly return the value',
+        'that the player was configured with for ' + dimension + '.',
+        'Instead, you should use getComputedStyle.'
+      ].join(' '));
+      var el = this.el();
+      var cs;
+      if (typeof getComputedStyle === 'function') {
+        cs = getComputedStyle(el);
+        return cs ? cs[dimension] : '';
+      } else {
+        return el.currentStyle[dimension];
+      }
+    };
   };
 
   // The `children` property of `options_` used to be an object, but it is
@@ -203,5 +225,8 @@
 
     delete player.polyfilledTechKeys_;
   };
+
+  Player.prototype.width = dimensionMaker('width');
+  Player.prototype.height = dimensionMaker('height');
 
 })(window, window.videojs);
