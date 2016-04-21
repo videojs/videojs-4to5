@@ -197,11 +197,12 @@
 
     originals.Player.unloadTech_.apply(player, arguments);
 
-    player.polyfilledTechKeys_.forEach(function(key) {
-      delete player.tech[key];
-    });
-
-    delete player.polyfilledTechKeys_;
+    if (player.polyfilledTechKeys_) {
+      player.polyfilledTechKeys_.forEach(function(key) {
+        delete player.tech[key];
+      });
+      delete player.polyfilledTechKeys_;
+    }
   };
 
 })(window, window.videojs);
