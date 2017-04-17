@@ -1,4 +1,20 @@
 (function(window, videojs) {
+  var version;
+
+  try {
+    version = Number(videojs.VERSION.match(/\d+/)[0]);
+  } catch (x) {
+    version = null;
+  }
+
+  // Do not shim older versions or globals that have already been shimmed.
+  if (version < 5 || videojs.has4to5_) {
+    return;
+  }
+
+  // Add the shim flag.
+  videojs.has4to5_ = true;
+
   var Component = videojs.getComponent('Component');
   var Player = videojs.getComponent('Player');
 
