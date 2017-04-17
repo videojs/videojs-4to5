@@ -1,4 +1,12 @@
 (function(window, videojs) {
+
+  // ensure compatibility only executes once
+  if (videojs.sham4to5_) {
+    videojs.sham4to5_++;
+    return;
+  }
+  videojs.sham4to5_ = 1;
+
   var Component = videojs.getComponent('Component');
   var Player = videojs.getComponent('Player');
 
